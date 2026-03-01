@@ -1,0 +1,25 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;      
+}
+
+.hero {
+    height: 400px;
+    background-image: url('../assets/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.dashboard-card {
+    transition: 0.3s;
+}
+
+.dashboard-card:hover {
+    transform: scale(1.05);
+}
+
+footer {
+    margin-top: 50px;
+}
