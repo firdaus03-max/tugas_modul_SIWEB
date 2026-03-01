@@ -1,15 +1,19 @@
 // ===========================================
-// 1. FITUR DARK MODE (LocalStorage & DOM)
+// 1. KONFIGURASI AWAL & ELEMEN DOM
 // ===========================================
 const btnTheme = document.getElementById('btn-theme');
 const body = document.body;
 
-// Cek apakah ada simpanan tema di browser
+// ===========================================
+// 2. FITUR DARK MODE (LocalStorage)
+// ===========================================
+// Cek tema tersimpan di localStorage saat halaman dimuat
 if (localStorage.getItem('theme') === 'dark') {
     body.classList.add('dark-mode');
     btnTheme.innerHTML = '<i class="bi bi-sun-fill"></i> Mode Terang';
 }
 
+// Event listener untuk tombol dark mode
 btnTheme.addEventListener('click', function() {
     body.classList.toggle('dark-mode');
 
@@ -23,10 +27,15 @@ btnTheme.addEventListener('click', function() {
 });
 
 // ===========================================
-// 2. FITUR WISHLIST (Array & LocalStorage)
+// 3. FITUR WISHLIST (Array & LocalStorage)
 // ===========================================
+
+// Inisialisasi wishlist dari localStorage atau array kosong
 let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
 
+/**
+ * Memperbarui tampilan jumlah item di wishlist (pada navbar)
+ */
 function updateWishlistCount() {
     const countElement = document.getElementById('wishlist-count');
     if (countElement) {
@@ -34,118 +43,132 @@ function updateWishlistCount() {
     }
 }
 
+/**
+ * Menambahkan motor ke wishlist
+ * @param {string} namaMotor - Nama motor yang akan ditambahkan
+ * @param {string} harga - Harga motor
+ */
 function tambahKeWishlist(namaMotor, harga) {
     // Cek apakah motor sudah ada di wishlist
     const exists = wishlist.some(item => item.nama === namaMotor);
     
     if (!exists) {
-        wishlist.push({ nama: namaMotor, harga: harga });
-        localStorage.setItem('wishlist', JSON.stringify(wishlist));
-        updateWishlistCount();
-        alert(namaMotor + ' ditambahkan ke wishlist!');
-        
-        // Ubah warna tombol wishlist
-        const buttons = document.querySelectorAll('.btn-wishlist');
-        buttons.forEach(btn => {
-            if (btn.closest('.card-body') && 
-                btn.closest('.card-body').querySelector('.card-title').innerText === namaMotor) {
-                btn.classList.add('btn-danger');
-                btn.classList.remove('btn-outline-danger');
-                btn.innerHTML = '<i class="bi bi-heart-fill"></i> Di Wishlist';
-            }
+        // Tambah ke array wishlist
+        wishlist.push({ 
+            nama: namaMotor, 
+            harga: harga
         });
+        
+        // Simpan ke localStorage
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        
+        // Update tampilan
+        updateWishlistCount();
+        alert(`✅ ${namaMotor} ditambahkan ke wishlist!`);
+        
+        // Ubah tampilan tombol wishlist
+        ubahTampilanTombolWishlist(namaMotor, true);
     } else {
-        alert(namaMotor + ' sudah ada di wishlist!');
+        alert(`⚠️ ${namaMotor} sudah ada di wishlist!`);
     }
 }
 
+/**
+ * Mengubah tampilan tombol wishlist (aktif/non-aktif)
+ * @param {string} namaMotor - Nama motor
+ * @param {boolean} isActive - Status aktif (true/false)
+ */
+function ubahTampilanTombolWishlist(namaMotor, isActive) {
+    const tombolWishlist = document.querySelectorAll('.btn-wishlist');
+    
+    tombolWishlist.forEach(btn => {
+        const cardBody = btn.closest('.card-body');
+        if (cardBody) {
+            const motorDiCard = cardBody.querySelector('.card-title').innerText;
+            if (motorDiCard === namaMotor) {
+                if (isActive) {
+                    btn.classList.add('btn-danger');
+                    btn.classList.remove('btn-outline-danger');
+                    btn.innerHTML = '<i class="bi bi-heart-fill"></i> Di Wishlist';
+                } else {
+                    btn.classList.remove('btn-danger');
+                    btn.classList.add('btn-outline-danger');
+                    btn.innerHTML = '<i class="bi bi-heart"></i> Wishlist';
+                }
+            }
+        }
+    });
+}
+
+/**
+ * Menampilkan isi wishlist di modal (TANPA TOMBOL HAPUS)
+ */
 function tampilkanWishlist() {
     const daftarWishlist = document.getElementById('daftar-wishlist');
     if (!daftarWishlist) return;
 
+    // Kosongkan daftar wishlist
     daftarWishlist.innerHTML = '';
 
     if (wishlist.length === 0) {
-        daftarWishlist.innerHTML = '<li class="list-group-item text-center text-muted">Belum ada motor di wishlist</li>';
+        // Tampilkan pesan jika wishlist kosong
+        daftarWishlist.innerHTML = '<li class="list-group-item text-center text-muted">✨ Belum ada motor di wishlist</li>';
     } else {
-        wishlist.forEach((item, index) => {
+        // Tampilkan setiap item wishlist (TANPA TOMBOL HAPUS)
+        wishlist.forEach((item) => {
             daftarWishlist.innerHTML += `
-                <li class="list-group-item d-flex justify-content-between align-items-center">
+                <li class="list-group-item">
                     <div>
                         <strong>${item.nama}</strong><br>
                         <small class="text-muted">${item.harga}</small>
                     </div>
-                    <button class="btn btn-sm btn-outline-danger" onclick="hapusDariWishlist(${index})">
-                        <i class="bi bi-trash"></i>
-                    </button>
                 </li>
             `;
         });
     }
 }
 
-function hapusDariWishlist(index) {
-    wishlist.splice(index, 1);
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
-    updateWishlistCount();
-    tampilkanWishlist();
-    
-    // Kembalikan tampilan tombol wishlist di halaman utama
-    const motorDiWishlist = document.querySelectorAll('.btn-danger');
-    motorDiWishlist.forEach(btn => {
-        if (btn.classList.contains('btn-wishlist')) {
-            btn.classList.remove('btn-danger');
-            btn.classList.add('btn-outline-danger');
-            btn.innerHTML = '<i class="bi bi-heart"></i> Wishlist';
-        }
-    });
-}
-
-function kosongkanWishlist() {
-    wishlist = [];
-    localStorage.removeItem('wishlist');
-    updateWishlistCount();
-    tampilkanWishlist();
-    
-    // Kembalikan semua tombol wishlist ke keadaan semula
-    const tombolWishlist = document.querySelectorAll('.btn-wishlist');
-    tombolWishlist.forEach(btn => {
-        btn.classList.remove('btn-danger');
-        btn.classList.add('btn-outline-danger');
-        btn.innerHTML = '<i class="bi bi-heart"></i> Wishlist';
-    });
-}
-
 // ===========================================
-// 3. FITUR BELI (Event Listener & Manipulasi DOM)
+// 4. FITUR BELI (Event Listener & Stok)
 // ===========================================
+
+/**
+ * Mengaktifkan tombol beli untuk semua motor
+ */
 function aktifkanTombolBeli() {
     const tombolBeli = document.querySelectorAll('.btn-beli');
 
+    // Clone dan ganti tombol untuk menghapus event listener lama
     tombolBeli.forEach(function(button) {
-        // Hapus event listener lama dengan clone
         const newButton = button.cloneNode(true);
         button.parentNode.replaceChild(newButton, button);
     });
 
+    // Tambahkan event listener ke tombol baru
     const tombolBaru = document.querySelectorAll('.btn-beli');
     
     tombolBaru.forEach(function(button) {
         button.addEventListener('click', function(e) {
             e.preventDefault();
+            
+            // Ambil elemen card body
             const cardBody = e.target.closest('.card-body');
             if (!cardBody) return;
             
+            // Ambil elemen stok
             const stokElement = cardBody.querySelector('.stok-text');
             if (!stokElement) return;
             
+            // Parse stok
             let stokText = stokElement.innerText;
             let stok = parseInt(stokText.replace("Stok:", "").replace("Stok:", "").trim());
 
             if (stok > 0) {
+                // Kurangi stok
                 stok--;
                 stokElement.innerHTML = "Stok: " + stok;
                 
+                // Ambil nama motor
                 const namaMotor = cardBody.querySelector('.card-title').innerText;
                 alert("✅ Berhasil membeli " + namaMotor + "!");
                 
@@ -164,8 +187,12 @@ function aktifkanTombolBeli() {
 }
 
 // ===========================================
-// 4. FITUR TAMBAH MOTOR BARU (Bonus)
+// 5. FITUR TAMBAH MOTOR BARU (Bonus)
 // ===========================================
+
+/**
+ * Menambahkan motor baru ke daftar
+ */
 function tambahMotorBaru() {
     // Ambil nilai dari form
     const namaMotor = document.getElementById('namaMotor')?.value;
@@ -175,7 +202,7 @@ function tambahMotorBaru() {
     const hargaMotor = document.getElementById('hargaMotor')?.value;
     const stokMotor = document.getElementById('stokMotor')?.value;
 
-    // Validasi sederhana
+    // Validasi input
     if (!namaMotor || !merkMotor || !tahunMotor || !ccMotor || !hargaMotor || !stokMotor) {
         alert('⚠️ Semua field harus diisi!');
         return;
@@ -234,7 +261,7 @@ function tambahMotorBaru() {
 }
 
 // ===========================================
-// 5. INISIALISASI SAAT HALAMAN DIMUAT
+// 6. INISIALISASI SAAT HALAMAN DIMUAT
 // ===========================================
 document.addEventListener('DOMContentLoaded', function() {
     // Update jumlah wishlist
@@ -243,20 +270,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Aktifkan tombol beli
     aktifkanTombolBeli();
     
-    // Cek dan tandai motor yang sudah ada di wishlist
+    // Tandai motor yang sudah ada di wishlist
     if (wishlist.length > 0) {
-        const tombolWishlist = document.querySelectorAll('.btn-wishlist');
-        tombolWishlist.forEach(btn => {
-            const cardBody = btn.closest('.card-body');
-            if (cardBody) {
-                const namaMotor = cardBody.querySelector('.card-title').innerText;
-                const exists = wishlist.some(item => item.nama === namaMotor);
-                if (exists) {
-                    btn.classList.add('btn-danger');
-                    btn.classList.remove('btn-outline-danger');
-                    btn.innerHTML = '<i class="bi bi-heart-fill"></i> Di Wishlist';
-                }
-            }
+        wishlist.forEach(item => {
+            ubahTampilanTombolWishlist(item.nama, true);
         });
     }
 });
