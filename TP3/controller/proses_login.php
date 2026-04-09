@@ -15,8 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'] ?? '';
     $remember = isset($_POST['remember']) ? true : false;
     
-    // Validasi sederhana (contoh: username=admin, password=admin123)
-    // Dalam implementasi nyata, ini harus dicek ke database
+
     if ($username === 'firdaus' && $password === 'firdaus123') {
         
         // Set session login
