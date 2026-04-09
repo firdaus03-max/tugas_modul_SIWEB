@@ -1,0 +1,121 @@
+.body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    transition: 0.3s;
+}
+
+.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+.dark-mode .card {
+    background-color: #1e1e1e;
+    color: white;
+}
+
+.hero-section {
+    height: 350px;
+    background-image: url("../assets/background.jpg");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.card:hover {
+    transform: scale(1.03);
+    transition: 0.3s;
+}
+
+body.login-page {
+    min-height: 100vh;
+    background: #9bb1ee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+}
+
+.login-container {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    background: #b9b4b4;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 2rem 1.2rem 1.2rem 1.2rem;
+    max-width: 320px;
+    width: 100%;
+    margin: 1rem 0;
+    text-align: center;
+}
+.login-card h2 {
+    margin-bottom: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    font-size: 1.4rem;
+}
+.login-card .form-label {
+    font-weight: 400;
+    color: #333;
+    font-size: 1rem;
+    display: block;
+    text-align: left;
+    margin-bottom: 0.3rem;
+}
+.login-card .form-control {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 0.6rem 0.9rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    background: #fafafa;
+}
+.login-card .form-control:focus {
+    border-color: #888;
+    box-shadow: none;
+}
+.login-card .btn-warning {
+    background: #ffc107;
+    color: #222;
+    border: none;
+    font-weight: 500;
+    border-radius: 5px;
+    padding: 0.5rem 1.2rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    display: block;
+}
+.login-card .btn-warning:hover {
+    background: #e0a800;
+    color: #fff;
+}
+.login-card .btn-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.97rem;
+    margin-top: 1.2rem;
+    display: block;
+}
+.login-card .btn-link:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+.login-card .form-check-label {
+    font-size: 0.98rem;
+    color: #555;
+}
+.login-card .form-check-input:checked {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
